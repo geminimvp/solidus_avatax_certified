@@ -18,12 +18,10 @@ module Spree
       end
 
       def ping_my_service
-        mytax = TaxSvc.new
-        response = mytax.ping
+        response = avatax_service.ping
 
         if response.success?
           flash[:success] = 'Ping Successful'
-
         else
           flash[:error] = 'Ping Error'
         end
@@ -35,13 +33,12 @@ module Spree
       end
 
       def validate_address
-        mytax = TaxSvc.new
         address = permitted_address_validation_attrs
 
         address['country'] = Spree::Country.find_by(id: address['country']).try(:iso)
         address['region'] = Spree::State.find_by(id: address['region']).try(:abbr)
 
-        response = mytax.validate_address(address)
+        response = avatax_service.validate_address(address)
         result = response.result
 
         if response.failed?
@@ -66,11 +63,16 @@ module Spree
 
       private
 
+      def avatax_service
+        TaxSvc.new
+      end
+
       def load_avatax_origin
-        @avatax_origin = if Spree::Avatax::Config.origin.blank?
+        current_origin = current_avatax_config.origin
+        @avatax_origin = if current_origin.blank?
                            {}
                          else
-                           JSON.parse(Spree::Avatax::Config.origin)
+                           JSON.parse(current_origin)
                          end
       end
 

@@ -5,6 +5,8 @@ module SolidusAvataxCertified
     class << self
       def seed!(print_messages = true)
         @print_messages = print_messages
+        @config = ::Spree::AvataxConfiguration.scoped(nil)
+
         stored_env_prefs
         boolean_prefs
         enabled_countries_pref
@@ -19,13 +21,13 @@ module SolidusAvataxCertified
                     ENV["AVATAX_#{env.upcase}"]
                   end
 
-          ::Spree::Avatax::Config[env.to_sym] = value
+          @config[env.to_sym] = value
         end
       end
 
       def boolean_prefs
         ::Spree::AvataxConfiguration.boolean_preferences.each do |preference|
-          ::Spree::Avatax::Config[preference.to_sym] = if ['refuse_checkout_address_validation_error', 'log_to_stdout', 'raise_exceptions'].include?(preference)
+          @config[preference.to_sym] = if ['refuse_checkout_address_validation_error', 'log_to_stdout', 'raise_exceptions'].include?(preference)
                                                        false
                                                      else
                                                        true
@@ -34,11 +36,11 @@ module SolidusAvataxCertified
       end
 
       def enabled_countries_pref
-        ::Spree::Avatax::Config.address_validation_enabled_countries = ['United States', 'Canada']
+        @config.address_validation_enabled_countries = ['United States', 'Canada']
       end
 
       def origin_address
-        origin = ::Spree::Avatax::Config.origin
+        origin = @config.origin
         origin = "{}" if origin.nil?
       end
 

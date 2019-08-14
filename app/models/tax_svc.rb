@@ -4,6 +4,12 @@ require 'logging'
 
 # Avatax tax calculation API calls
 class TaxSvc
+  attr_accessor :avatax_config
+
+  def initialize
+    @avatax_config = SolidusAvataxCertified::Current.config
+  end
+
   def get_tax(request_hash)
     log(__method__, request_hash)
 
@@ -68,27 +74,27 @@ class TaxSvc
   private
 
   def tax_calculation_enabled?
-    Spree::Avatax::Config.tax_calculation
+    avatax_config.tax_calculation
   end
 
   def account_number
-    Spree::Avatax::Config.account
+    avatax_config.account
   end
 
   def license_key
-    Spree::Avatax::Config.license_key
+    avatax_config.license_key
   end
 
   def raise_exceptions?
-    Spree::Avatax::Config.raise_exceptions
+    avatax_config.raise_exceptions
   end
 
   def company_code
-    Spree::Avatax::Config.company_code
+    avatax_config.company_code
   end
 
   def environment
-    Spree::Avatax::Config.environment
+    avatax_config.environment
   end
 
   def client

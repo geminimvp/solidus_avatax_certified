@@ -2,9 +2,12 @@
 
 module SolidusAvataxCertified
   class PreferenceUpdater
+    attr_accessor :avatax_config
+
     def initialize(params)
-      @avatax_origin = params[:address]
+      @avatax_origin = params[:address] || {}
       @avatax_preferences = params[:settings]
+      @avatax_config = SolidusAvataxCertified::Current.config
     end
 
     def update
@@ -18,25 +21,25 @@ module SolidusAvataxCertified
 
     def update_boolean_settings
       ::Spree::AvataxConfiguration.boolean_preferences.each do |key|
-        ::Spree::Avatax::Config[key.to_sym] = @avatax_preferences[key] || false
+        avatax_config[key.to_sym] = @avatax_preferences[key] || false
       end
     end
 
     def update_storable_settings
       ::Spree::AvataxConfiguration.storable_env_preferences.each do |key|
-        ::Spree::Avatax::Config[key.to_sym] = @avatax_preferences[key] || ENV["AVATAX_#{key.upcase}"]
+        avatax_config[key.to_sym] = @avatax_preferences[key] || ENV["AVATAX_#{key.upcase}"]
       end
     end
 
     def update_origin_address
       set_region
       set_country
-      ::Spree::Avatax::Config.origin = @avatax_origin.to_json
+      avatax_config.origin = @avatax_origin.to_json
     end
 
     def update_validation_enabled_countries
       if @avatax_preferences['address_validation_enabled_countries'].present?
-        ::Spree::Avatax::Config.address_validation_enabled_countries = @avatax_preferences['address_validation_enabled_countries']
+        avatax_config.address_validation_enabled_countries = @avatax_preferences['address_validation_enabled_countries']
       end
     end
 

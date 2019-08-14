@@ -45,11 +45,14 @@ module Spree
 
     private
 
+    def avatax_service
+      TaxSvc.new
+    end
+
     def cancel_order_to_avalara
       logger.info "Begin cancel order #{order.number} to avalara..."
 
-      mytax = TaxSvc.new
-      mytax.cancel_tax(order.number).tax_result
+      avatax_service.cancel_tax(order.number).tax_result
     end
 
     def post_order_to_avalara(commit = false, doc_type = nil)
@@ -57,8 +60,7 @@ module Spree
 
       request = SolidusAvataxCertified::Request::GetTax.new(order, commit: commit, doc_type: doc_type).generate
 
-      mytax = TaxSvc.new
-      response = mytax.get_tax(request)
+      response = avatax_service.get_tax(request)
 
       return { 'totalTax' => 0.0 } if response.error?
 
@@ -70,8 +72,7 @@ module Spree
 
       request = SolidusAvataxCertified::Request::ReturnTax.new(order, commit: commit, doc_type: doc_type, refund: refund).generate
 
-      mytax = TaxSvc.new
-      response = mytax.get_tax(request)
+      response = avatax_service.get_tax(request)
 
       return { 'totalTax' => 0.0 } if response.error?
 
@@ -79,11 +80,11 @@ module Spree
     end
 
     def document_committing_enabled?
-      Spree::Avatax::Config.document_commit
+      SolidusAvataxCertified::Current.config.document_commit
     end
 
     def tax_calculation_enabled?
-      Spree::Avatax::Config.tax_calculation
+      SolidusAvataxCertified::Current.config.tax_calculation
     end
 
     def logger

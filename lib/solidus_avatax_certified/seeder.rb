@@ -86,9 +86,9 @@ module SolidusAvataxCertified
       end
 
       def create_use_codes
-        unless Spree::AvalaraEntityUseCode.count >= 16
+        unless ::Spree::AvalaraEntityUseCode.count >= 16
           use_codes.each do |key, value|
-            Spree::AvalaraEntityUseCode.find_or_create_by(use_code: key, use_code_description: value)
+            ::Spree::AvalaraEntityUseCode.find_or_create_by(use_code: key, use_code_description: value)
           end
         end
       end

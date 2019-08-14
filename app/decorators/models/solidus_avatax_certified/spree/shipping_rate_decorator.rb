@@ -15,7 +15,7 @@ module SolidusAvataxDecorator
           display_base_price
         end.to_s
 
-        return price if ::Spree::Avatax::Config.tax_calculation
+        return price if ::Spree::AvataxConfiguration.current.tax_calculation
         return price if taxes.empty? || amount == 0
 
         tax_explanations = taxes.map(&:label).join(tax_label_separator)

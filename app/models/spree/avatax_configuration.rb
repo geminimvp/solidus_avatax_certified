@@ -16,6 +16,8 @@ class Spree::AvataxConfiguration < Spree::Preferences::Configuration
   preference :customer_can_validate, :boolean, default: false
   preference :raise_exceptions, :boolean, default: false
 
+  delegate :default_environment, to: :class
+
   def self.boolean_preferences
     %w(tax_calculation document_commit log log_to_stdout address_validation refuse_checkout_address_validation_error customer_can_validate raise_exceptions)
   end
@@ -24,11 +26,28 @@ class Spree::AvataxConfiguration < Spree::Preferences::Configuration
     %w(company_code account license_key environment)
   end
 
-  def default_environment
+  def self.default_environment
     if ENV['AVATAX_ENVIRONMENT'].present?
       ENV['AVATAX_ENVIRONMENT']
     else
       Rails.env.production? ? 'production' : 'sandbox'
+    end
+  end
+
+  def self.current
+    SolidusAvataxCertified::Current.config
+  end
+
+  def self.current=(config)
+    SolidusAvataxCertified::Current.config = config
+  end
+
+  def self.scoped(scope)
+    self.current = new.tap do |config|
+      if scope
+        prefs_prefix = ['avatax_config', scope.class.name.underscore, scope.id].join(':')
+        config.preference_store = Spree::Preferences::ScopedStore.new(prefs_prefix)
+      end
     end
   end
 end
