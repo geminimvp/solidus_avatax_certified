@@ -48,7 +48,7 @@ describe Spree::Order, :vcr do
       end
 
       it 'raises exception if preference is enabled' do
-        Spree::Avatax::Config.raise_exceptions = true
+        stub_avatax_preference(:raise_exceptions, true)
 
         expect{ subject }.to raise_exception(SolidusAvataxCertified::RequestError)
       end
@@ -124,14 +124,15 @@ describe Spree::Order, :vcr do
 
   describe '#validate_ship_address' do
     it 'returns the response if validation is success' do
-      Spree::Avatax::Config.address_validation = true
+      stub_avatax_preference(:address_validation, true)
+
       response = order.validate_ship_address
 
       expect(response['error']).not_to be_present
     end
 
     it 'returns the response if refuse checkout on address validation is disabled' do
-      Spree::Avatax::Config.refuse_checkout_address_validation_error = false
+      stub_avatax_preference(:refuse_checkout_address_validation_error, false)
       response = order.validate_ship_address
 
       expect(response['error']).not_to be_present
@@ -139,7 +140,7 @@ describe Spree::Order, :vcr do
 
     context 'validation failed' do
       it 'returns false' do
-        Spree::Avatax::Config.refuse_checkout_address_validation_error = true
+        stub_avatax_preference(:refuse_checkout_address_validation_error, true)
         order.ship_address.update_attributes(zipcode: nil, city: nil, address1: nil)
         response = order.validate_ship_address
 
@@ -147,7 +148,7 @@ describe Spree::Order, :vcr do
       end
 
       it 'raise exceptions if raise_exceptions preference is enabled' do
-        Spree::Avatax::Config.raise_exceptions = true
+        stub_avatax_preference(:raise_exceptions, true)
         order.ship_address.update_attributes(zipcode: nil, city: nil, address1: nil)
 
         expect{ order.validate_ship_address }.to raise_exception(SolidusAvataxCertified::RequestError)
@@ -163,20 +164,20 @@ describe Spree::Order, :vcr do
     end
 
     it 'returns true if preference is true and country validation is enabled' do
-      Spree::Avatax::Config.address_validation = true
-      Spree::Avatax::Config.address_validation_enabled_countries = ['United States', 'Canada']
+      stub_avatax_preference(:address_validation, true)
+      stub_avatax_preference(:address_validation_enabled_countries, ['United States', 'Canada'])
 
       expect(order).to be_address_validation_enabled
     end
 
     it 'returns false if address validation preference is false' do
-      Spree::Avatax::Config.address_validation = false
+      stub_avatax_preference(:address_validation, false)
 
       expect(order).not_to be_address_validation_enabled
     end
 
     it 'returns false if enabled country is not present' do
-      Spree::Avatax::Config.address_validation_enabled_countries = ['Canada']
+      stub_avatax_preference(:address_validation_enabled_countries, ['Canada'])
 
       expect(order).not_to be_address_validation_enabled
     end

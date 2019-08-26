@@ -62,6 +62,7 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
+  config.include SolidusAvataxCertified::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include WaitForAjax, type: :feature
@@ -71,10 +72,13 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with :truncation
   end
 
+  config.before :each do
+    seed_avatax_preferences
+  end
+
   config.before do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.start
-    MyConfigPreferences.set_preferences
   end
 
   config.after do

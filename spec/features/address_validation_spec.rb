@@ -18,10 +18,9 @@ RSpec.describe 'Address Validation Button in Checkout', :vcr, :js do
   # with refuse checkout on failure
 
   context 'Customer validate button enabled' do
-    before do
-      Spree::Avatax::Config.customer_can_validate = true
-      prep_page
-    end
+    let(:customer_can_validate) { true }
+
+    before { prep_page }
 
     context 'success' do
       it 'validates successfully and populates with validated address' do
@@ -53,14 +52,17 @@ RSpec.describe 'Address Validation Button in Checkout', :vcr, :js do
   end
 
   context 'Customer validate button disabled' do
+    let(:customer_can_validate) { false }
+
     it 'does not have validate button on address page' do
-      Spree::Avatax::Config.customer_can_validate = false
       prep_page
       expect(page).not_to have_content('Validate Ship Address')
     end
   end
 
   def prep_page
+    stub_avatax_preference(:customer_can_validate, customer_can_validate)
+
     allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
     allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
     visit spree.checkout_state_path(:address)

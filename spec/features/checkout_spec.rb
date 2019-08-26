@@ -9,6 +9,7 @@ RSpec.describe 'Checkout', :vcr, :js do
   let!(:user) { order.user }
 
   before do
+    stub_avatax_preference(:customer_can_validate, true)
     allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
     allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
   end
