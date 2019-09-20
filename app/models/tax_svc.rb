@@ -74,27 +74,27 @@ class TaxSvc
   private
 
   def tax_calculation_enabled?
-    avatax_config.tax_calculation
+    avatax_config&.tax_calculation
   end
 
   def account_number
-    avatax_config.account
+    avatax_config&.account
   end
 
   def license_key
-    avatax_config.license_key
+    avatax_config&.license_key
   end
 
   def raise_exceptions?
-    avatax_config.raise_exceptions
+    avatax_config&.raise_exceptions
   end
 
   def company_code
-    avatax_config.company_code
+    avatax_config&.company_code
   end
 
   def environment
-    avatax_config.environment
+    avatax_config&.environment
   end
 
   def client
