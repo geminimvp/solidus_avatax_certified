@@ -11,10 +11,24 @@ describe SolidusAvataxCertified::AvataxLog, type: :model do
   end
 
   describe '#enabled?' do
-    it 'returns a boolean value' do
-      stub_avatax_preference(:log, true)
+    context 'when logging is enabled' do
+      before do
+        stub_avatax_preference(:log, true)
+      end
 
-      expect(logger).to be_enabled
+      it 'returns true' do
+        expect(logger).to be_enabled
+      end
+    end
+
+    context 'when no config is present' do
+      before do
+        allow(::SolidusAvataxCertified::Current).to receive(:config) { nil }
+      end
+
+      it 'returns false' do
+        expect(logger).to_not be_enabled
+      end
     end
   end
 

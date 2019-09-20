@@ -18,7 +18,7 @@ module SolidusAvataxCertified
 
     def enabled?
       current_config = SolidusAvataxCertified::Current.config
-      current_config.log || current_config.log_to_stdout
+      current_config && (current_config.log || current_config.log_to_stdout)
     end
 
     def progname(progname = nil)
