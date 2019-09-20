@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ffaker'
   s.add_development_dependency "phantomjs", "~> 2.1.1"
   s.add_development_dependency "poltergeist", "~> 1.16"
+  s.add_development_dependency "pry-byebug"
   s.add_development_dependency "rspec-rails", "~> 3.2"
   s.add_development_dependency 'rubocop'
   s.add_development_dependency 'rubocop-rspec'
@@ -45,7 +46,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "selenium-webdriver", "~> 2.53.4"
   s.add_development_dependency 'shoulda-matchers', '~> 2.7'
   s.add_development_dependency "simplecov"
-  s.add_development_dependency "sqlite3", "~> 1.3.6"
+  s.add_development_dependency "sqlite3", "~> 1.3"
   s.add_development_dependency 'vcr'
   s.add_development_dependency 'webmock'
 end
