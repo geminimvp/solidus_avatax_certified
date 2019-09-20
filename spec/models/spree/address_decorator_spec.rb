@@ -6,29 +6,62 @@ describe Spree::Address, type: :model do
   let(:address) { build(:address) }
 
   describe '#validation_enabled?' do
-    it 'returns true if preference is true and country validation is enabled' do
-      stub_avatax_preference(:address_validation, true)
-      stub_avatax_preference(:address_validation_enabled_countries, ['United States', 'Canada'])
+    context 'when validation is true and country validation is enabled' do
+      before do
+        stub_avatax_preference(:address_validation, true)
+        stub_avatax_preference(:address_validation_enabled_countries, ['United States', 'Canada'])
+      end
 
-      expect(address).to be_validation_enabled
+      it 'returns true if preference is true and country validation is enabled' do
+        expect(address).to be_validation_enabled
+      end
     end
 
-    it 'returns false if address validation preference is false' do
-      stub_avatax_preference(:address_validation, false)
+    context 'when address validation is false' do
+      before do
+        stub_avatax_preference(:address_validation, false)
+      end
 
-      expect(address).not_to be_validation_enabled
+      it 'returns false if address validation preference is false' do
+        expect(address).not_to be_validation_enabled
+      end
     end
 
-    it 'returns false if enabled country is not present' do
-      stub_avatax_preference(:address_validation_enabled_countries, ['Canada'])
 
-      expect(address).not_to be_validation_enabled
+    context 'when enabled country is not present' do
+      before do
+        stub_avatax_preference(:address_validation_enabled_countries, ['Canada'])
+      end
+
+      it 'returns false if enabled country is not present' do
+        expect(address).not_to be_validation_enabled
+      end
+    end
+
+    context 'when no avatax config is present' do
+      before do
+        allow(::SolidusAvataxCertified::Current).to receive(:config) { nil }
+      end
+
+      it 'returns false' do
+        expect(address).to_not be_validation_enabled
+      end
     end
   end
 
   describe '#country_validation_enabled?' do
     it 'returns true if the current country is enabled' do
       expect(address).to be_country_validation_enabled
+    end
+
+    context 'when no avatax config is present' do
+      before do
+        allow(::SolidusAvataxCertified::Current).to receive(:config) { nil }
+      end
+
+      it 'returns false' do
+        expect(address).to_not be_country_validation_enabled
+      end
     end
   end
 

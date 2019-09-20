@@ -9,7 +9,7 @@ module SolidusAvataxCertified
       end
 
       def avalara_tax_enabled?
-        SolidusAvataxCertified::Current.config.tax_calculation
+        SolidusAvataxCertified::Current.config&.tax_calculation
       end
 
       def cancel_avalara

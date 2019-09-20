@@ -15,7 +15,7 @@ module SolidusAvataxCertified
       end
 
       def avalara_tax_enabled?
-        SolidusAvataxCertified::Current.config.tax_calculation
+        SolidusAvataxCertified::Current.config&.tax_calculation
       end
 
       def cancel_avalara
@@ -47,7 +47,7 @@ module SolidusAvataxCertified
         response = avatax_address.validate
 
         return response.result if response.success?
-        if !SolidusAvataxCertified::Current.config.refuse_checkout_address_validation_error
+        if !SolidusAvataxCertified::Current.config&.refuse_checkout_address_validation_error
           return response
         end
 

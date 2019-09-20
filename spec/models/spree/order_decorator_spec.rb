@@ -13,6 +13,16 @@ describe Spree::Order, :vcr do
     it "returns true" do
       expect(Spree::Order.new.avalara_tax_enabled?).to eq(true)
     end
+
+    context 'when no avatax config is present' do
+      before do
+        allow(::SolidusAvataxCertified::Current).to receive(:config) { nil }
+      end
+
+      it 'returns false' do
+        expect(Spree::Order.new.avalara_tax_enabled?).to be_falsy
+      end
+    end
   end
 
   describe '#cancel_avalara' do
