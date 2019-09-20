@@ -10,12 +10,12 @@ module SolidusAvataxCertified
 
       module ClassMethods
         def validation_enabled_countries
-          ::Spree::AvataxConfiguration.current.address_validation_enabled_countries
+          ::Spree::AvataxConfiguration.current&.address_validation_enabled_countries || []
         end
       end
 
       def validation_enabled?
-        ::Spree::AvataxConfiguration.current.address_validation && country_validation_enabled?
+        ::Spree::AvataxConfiguration.current&.address_validation && country_validation_enabled?
       end
 
       def country_validation_enabled?
